@@ -8,8 +8,8 @@ BindsTo=minecraft-proxy.service
 Before=minecraft-proxy.service
 
 # Start this service AFTER the FIFO named-pipe is set up
-BindsTo=minecraft-FIFO.socket
-After=minecraft-FIFO.socket
+BindsTo=minecraft.socket
+After=minecraft.socket
 
 [Service]
 # I run my Minecraft server as the "minecraft" user ; your setup might vary
