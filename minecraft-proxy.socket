@@ -4,7 +4,8 @@ Wants=network-online.target
 After=network-online.target
 
 [Socket]
-ListenStream=25565
+# Here we listen on port 25566, and in the .service file will proxy it to 25565...
+ListenStream=25566
 # Optional : Wait for data, not just an opened connection. Will be less sensitive to drive-by traffic.
 #DeferAcceptSec=3
 
