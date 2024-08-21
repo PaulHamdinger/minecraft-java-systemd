@@ -1,0 +1,42 @@
+[Unit]
+Description=Minecraft server
+Wants=network-online.target
+After=network-online.target
+
+# Start this service BEFORE starting the proxy service
+BindsTo=minecraft-proxy.service
+Before=minecraft-proxy.service
+
+# Start this service AFTER the FIFO named-pipe is set up
+BindsTo=minecraft-FIFO.socket
+After=minecraft-FIFO.socket
+
+[Service]
+# I run my Minecraft server as the "minecraft" user ; your setup might vary
+User=minecraft
+Group=minecraft
+Type=exec
+Restart=on-failure
+
+# Don't kill the Minecraft server directly. Instead, punt the "kill" signal and instead
+# send a "stop" command to the server, so that it shuts down gracefully.
+KillSignal=SIGCONT
+ExecStop=/bin/sh -c "echo /stop > /run/minecraft.FIFO"
+
+# This is the directory which contains the server.jar file, etc. For me, it belongs to the "minecraft" user.
+WorkingDirectory=/home/minecraft/bin/my-minecraft-server
+# Your invocation can vary ; this is just what I use, based on voodoo widsom from the Internet...
+ExecStart=/usr/bin/java -server -Xms512M -Xmx2048M -XX:+UseZGC -XX:ZCollectionInterval=30 -XX:MetaspaceSize=256M -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -jar server.jar nogui
+# It takes a hot second for the Minecraft server to actually start listening on port 25565, so I find it
+# necessary to delay the "has started" state of this service for a few seconds, in order for the systemd
+# dependencies to not get upset.
+ExecStartPost=sleep 8
+
+# The server -- which normally takes input from "stdin" -- will instead take input from the FIFO named-pipe.
+StandardInput=socket
+# These are the usual defaults (but must be explicitly stated since we're overriding StandardInput above)
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
