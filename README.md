@@ -8,7 +8,9 @@ Use a "FIFO" named-pipe to send commands to "stdin" of the running server.
 
 ## How to use
 
-After customizing the files, start everything with...
+Use these as a starting place for your own setup.
+
+After reviewing and customizing the files, start everything with...
 
 `sudo systemctl enable --now minecraft-proxy.socket`
 
@@ -26,7 +28,7 @@ Watch server output with `journalctl -f -u minecraft.service`.
 
 The .socket and .service files for this setup are a little tricky. Hopefully these can serve as guideposts for someone else struggling to make it work.
 
-The Minecraft server doesn't naturally support systemd's method of handing off activated ports to services. So it's *unfortunately* necessary to use systemd's `systemd-socket-proxyd` command as a work-around. This is why we have the dumb thing where clients must connect to port *25566*, while the server is actually listening on port *25565*. If you're sufficiently comfortable with what you're doing you can use any ports you want, of course.
+The Minecraft server doesn't naturally support systemd's method of handing off activated ports to services. So it's *unfortunately* necessary to use systemd's `systemd-socket-proxyd` command as a work-around. This is why we have the dumb thing where clients must connect to port *25566*, while the server is actually listening on port *25565*. If you're sufficiently comfortable with what you're doing you can use any two ports you want, of course.
 
 `minecraft-proxy.socket` "controls" all the other stuff, using systemd dependencies. All you need is to start/stop that single unit. The other .socket file and two .services files will be activated automatically, and shouldn't need to be manually enabled or started.
 
