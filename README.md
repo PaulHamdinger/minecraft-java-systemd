@@ -12,9 +12,7 @@ After customizing the files, start everything with...
 
 `sudo systemctl enable --now minecraft-proxy.socket`
 
-The other .socket and two .services files will be activated on-demand, and shouldn't need to be manually enabled or started.
-
-In Minecraft, try connecting to `localhost:25566` or `127.0.0.1:25566`.
+Now start Minecraft and try connecting to `localhost:25566` or `127.0.0.1:25566`.
 
 The Minecraft server will start up in the background as soon as someone connects to port **25566** (which gets proxied to the server's native port **25565**).
 
@@ -29,6 +27,8 @@ Watch server output with `journalctl -f -u minecraft.service`.
 The .socket and .service files for this setup are a little tricky. Hopefully these can serve as guideposts for someone else struggling to make it work.
 
 The Minecraft server doesn't naturally support systemd's method of handing off activated ports to services. So it's *unfortunately* necessary to use systemd's `systemd-socket-proxyd` command as a work-around. This is why we have the dumb thing where clients must connect to port *25566*, while the server is actually listening on port *25565*. If you're sufficiently comfortable with what you're doing you can use any ports you want, of course.
+
+`minecraft-proxy.socket` "controls" all the other stuff, using systemd dependencies. All you need is to start/stop that single unit. The other .socket file and two .services files will be activated automatically, and shouldn't need to be manually enabled or started.
 
 In systemd's world, `.socket` and `.service` files should share the same base filename. When you do this, activity on the socket automatically kicks off the service. In our case, this is exactly the behaviour we want for `minecraft-proxy.socket` and `minecraft-proxy.service`.
 
