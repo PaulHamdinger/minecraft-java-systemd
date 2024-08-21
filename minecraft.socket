@@ -1,0 +1,17 @@
+[Unit]
+Description=Minecraft FIFO named-pipe
+
+# Create the FIFO named-pipe BEFORE the server starts...
+BindsTo=minecraft.service
+Before=minecraft.service
+
+[Socket]
+# I seem to recall this service fails if the file already exists, so let's clear it out of the way.
+ExecStartPre=rm -f /run/minecraft.FIFO
+ListenFIFO=/run/minecraft.FIFO
+SocketUser=minecraft
+SocketGroup=minecraft
+SocketMode=0666
+
+[Install]
+WantedBy=sockets.target
