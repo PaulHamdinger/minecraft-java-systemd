@@ -1,4 +1,4 @@
-# systemd files for Java Minecraft Server
+# Linux systemd files for a Java Minecraft Server
 
 A collection of systemd files to run a Java Minecraft server on a Linux PC.
 
