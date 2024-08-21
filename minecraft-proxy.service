@@ -1,0 +1,15 @@
+[Unit]
+Description=Proxyd to Minecraft server
+
+# minecraft-proxy.socket is listening on port 25566
+BindsTo=minecraft-proxy.socket
+After=minecraft-proxy.socket
+
+# minecraft.service is where the actual server gets started
+BindsTo=minecraft.service
+After=minecraft.service
+
+[Service]
+# We proxy port 25566 (from the .socket) to port 25565, which is what the Minecraft server uses by default
+ExecStart=/usr/lib/systemd/systemd-socket-proxyd --exit-idle-time=300s 127.0.0.1:25566
+Restart=on-failure
